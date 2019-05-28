@@ -31,8 +31,6 @@ public class User {
     @Column(name = "username")
     private String username;
 
-
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -42,12 +40,12 @@ public class User {
         }
 
     public User(String email, String password, String firstname, String lastname, boolean enabled, String username) {
-        this.email = email;
-        this.password = password;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.enabled = enabled;
-        this.username = username;
+        this.setEmail(email);
+        this.setPassword(password);
+        this.setFirstname(firstname);
+        this.setLastname(lastname);
+        this.setEnabled(enabled);
+        this.setUsername(username);
     }
 
     public long getId() {
@@ -91,7 +89,7 @@ public class User {
         this.lastname = lastname;
     }
 
-    public boolean isEnabled() {
+    public boolean getEnabled() {
         return enabled;
     }
 
