@@ -1,8 +1,8 @@
 package com.example.demo;
 
-import net.bytebuddy.dynamic.loading.InjectionClassLoader;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.management.relation.Role;
+//import javax.management.relation.Role;
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -31,14 +31,15 @@ public class User {
     @Column(name = "username")
     private String username;
 
+
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles;
 
     public User() {
-        
-    }
+        }
 
     public User(String email, String password, String firstname, String lastname, boolean enabled, String username) {
         this.email = email;
@@ -70,7 +71,8 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        BCryptPasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+        this.password=passwordEncoder.encode(password);
     }
 
     public String getFirstname() {
@@ -103,5 +105,13 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 }
