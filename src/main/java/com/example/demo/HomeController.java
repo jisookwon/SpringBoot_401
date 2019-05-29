@@ -5,10 +5,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -17,6 +14,8 @@ import java.security.Principal;
 public class HomeController {
     @Autowired
     private UserService userService;
+    @Autowired
+    CourseRepository courseRepository;
 
     @GetMapping("/register")
     public String showRegistrationPage(Model model){
@@ -35,12 +34,12 @@ public class HomeController {
             userService.saveUser(user);
             model.addAttribute("message", "User Account Created");
         }
-        return "index";
+        return "list";
     }
-    @RequestMapping("/")
-    public String index() {
-        return "index";
-    }
+//    @RequestMapping("/")
+//    public String index() {
+//        return "list";
+//    }
 
     @RequestMapping("/login")
     public String login() {
@@ -54,5 +53,57 @@ public class HomeController {
         model.addAttribute("myuser", myuser);
         return "secure";
     }
+
+
+    // =====From Course Project
+    @RequestMapping("/")
+    public String listCourses(Model model){
+        model.addAttribute("courses", courseRepository.findAll());
+        return "list";
+    }
+
+    @GetMapping("/add")
+    public String courseForm(Model model){
+        model.addAttribute("course", new Course());
+        return "courseform";
+    }
+
+    @PostMapping("/process")
+    public String processForm(@Valid Course course, BindingResult result, Model model){
+        model.addAttribute("course", new Course());
+
+        if (result.hasErrors()){
+            return "courseform";
+        }
+        courseRepository.save(course);
+        //return "list";
+        return "redirect:/";
+    }
+
+    @RequestMapping("/detail/{id}")
+    public String showCourses(@PathVariable("id") long id, Model model){
+        model.addAttribute("course", courseRepository.findById(id).get());
+        return "show";
+    }
+
+    @RequestMapping("/update/{id}")
+    public String updateCourses(@PathVariable("id") long id, Model model){
+        model.addAttribute("course", courseRepository.findById(id).get());
+        return "courseform";
+    }
+
+    @RequestMapping("/delete/{id}")
+    public String delCourses(@PathVariable("id") long id){
+        courseRepository.deleteById(id);
+        return "redirect:/";
+       // return "list";
+    }
+
 }
+
+
+
+
+
+
 
